@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.function.Consumer;
 
 public class Network {
 
@@ -13,8 +14,9 @@ public class Network {
     private int port;
     private String host;
 
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
+    private Socket socket;
+    private DataInputStream socketInput;
+    private DataOutputStream socketOutput;
 
     public Network(String host, int port) {
         this.host = host;
@@ -27,14 +29,49 @@ public class Network {
 
     public boolean connect() {
         try {
-            Socket socket = new Socket(host, port);
-            inputStream = new DataInputStream(socket.getInputStream()); // чтение
-            outputStream = new DataOutputStream(socket.getOutputStream()); // запись
+            socket = new Socket(host, port);
+            socketInput = new DataInputStream(socket.getInputStream()); // чтение
+            socketOutput = new DataOutputStream(socket.getOutputStream()); // запись
             return true;
         } catch (IOException e){
             e.printStackTrace();
             return false;
         }
     }
-    
+
+    public void sendMessage(String message) throws IOException {
+        try {
+            socketOutput.writeUTF(message);
+        } catch (IOException e) {
+            System.err.println("Не удалось отправить сообщение на сервер");
+            throw e;
+        }
+    }
+
+    public void waitMessages(Consumer<String> messageHandler) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        String message = socketInput.readUTF();
+                        messageHandler.accept(message);
+                    } catch (IOException e) {
+                        System.err.println("Не удалось получить сообщение от сервера");
+                        break;
+                    }
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void close() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.err.println("Не удалось закрыть сетевое соединение");
+        }
+    }
 }

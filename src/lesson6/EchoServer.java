@@ -24,6 +24,7 @@ public class EchoServer {
                 }
                 outputStream.writeUTF("Echo:" + message);
             }
+
         } catch (IOException e) {
             System.err.println("Error connecting to the port" + PORT);
             e.printStackTrace();
