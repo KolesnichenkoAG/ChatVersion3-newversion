@@ -1,5 +1,6 @@
 package com.geekbrains.clientchat;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -30,28 +31,20 @@ public class ClientController {
 
     public void sendMessage(){
         String message = messageTextArea.getText();
+        chatTextArea.appendText(DateFormat.getTimeInstance().format(new Date()) + " ");
+        requestFocus();
+        appendMessageToChat(message);
         try {
             network.sendMessage(message);
         } catch (IOException e) {
             application.showErrorDialog("Ошибка передачи данных по сети");
         }
-        appendMessageToChat(message);
     }
 
     public void appendMessageToChat(String message) {
-        if (!messageTextArea.getText().isEmpty()) {
-            chatTextArea.appendText(DateFormat.getDateTimeInstance().format(new Date()));
+        if (!message.isEmpty()) {
+            chatTextArea.appendText(message);
             chatTextArea.appendText(System.lineSeparator());
-            if (!userList.getSelectionModel().isEmpty()){
-                String sender = userList.getSelectionModel().getSelectedItem().toString();
-                chatTextArea.appendText(sender + ": ");
-            } else {
-                chatTextArea.appendText("я: ");
-            }
-            chatTextArea.appendText(messageTextArea.getText().trim());
-            chatTextArea.appendText(System.lineSeparator());
-            chatTextArea.appendText(System.lineSeparator());
-            messageTextArea.requestFocus();
             messageTextArea.clear();
         }
     }
@@ -77,12 +70,12 @@ public class ClientController {
     public void setApplication(ClientChat application) {
         this.application = application;
     }
-/*private void requestFocus (){
+    private void requestFocus (){
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                messageField.requestFocus();
+                messageTextArea.requestFocus();
             }
         });
-    } */
+    }
 }
