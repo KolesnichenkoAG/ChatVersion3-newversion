@@ -18,7 +18,7 @@ import java.io.IOException;
 public class ClientChat extends Application {
 
     private Stage stage;
-    private Network network;
+    private Stage authStage;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -44,7 +44,7 @@ public class ClientChat extends Application {
         authLoader.setLocation(ClientChat.class.getResource("authDialog.fxml"));
         AnchorPane authDialogPanel = authLoader.load();
 
-        Stage authStage = new Stage();
+        authStage = new Stage();
         authStage.initOwner(primaryStage);
         authStage.initModality(Modality.WINDOW_MODAL);
 
@@ -52,30 +52,29 @@ public class ClientChat extends Application {
 
         AuthController authController = authLoader.getController();
         authController.setClientChat(this);
-        authController.setNetwork(network);
+        authController.initializeMessageHandler();
 
         authStage.showAndWait();
+        controller.initializeMessageHandler();
     }
 
     private void connectToServer(ClientController clientController) {
-        network = new Network();
-        boolean resultConnectedToServer = network.connect();
+        boolean resultConnectedToServer = Network.getInstance().connect();
         if (!resultConnectedToServer) {
             String errorMessage = "Невозможно установить сетевое соединение";
             System.err.println(errorMessage);
             showErrorDialog(errorMessage);
         }
 
-        clientController.setNetwork(network);
+
         clientController.setApplication(this);
 
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent windowEvent) {
-                network.close();
+                Network.getInstance().close();
             }
         });
-
     }
 
     public void showErrorDialog(String message) {
@@ -87,5 +86,9 @@ public class ClientChat extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public Stage getAuthStage() {
+        return authStage;
     }
 }

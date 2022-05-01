@@ -1,5 +1,7 @@
 package com.geekbrains.chat;
 
+import com.geekbrains.chat.auth.AuthService;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,13 +10,13 @@ import java.util.List;
 
 public class MyServer {
 
-    
+    private AuthService authService;
     private final List<ClientHandler> clients = new ArrayList<>();
 
     public void start(int port) {
         try(ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server has been started");
-
+            authService = new AuthService();
             while (true) {
                 waitAndProcessClientConnection(serverSocket);
             }
@@ -46,5 +48,9 @@ public class MyServer {
 
     public void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
+    }
+
+    public AuthService getAuthService() {
+        return authService;
     }
 }

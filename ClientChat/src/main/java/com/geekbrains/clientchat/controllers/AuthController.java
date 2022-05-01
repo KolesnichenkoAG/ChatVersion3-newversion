@@ -2,16 +2,19 @@ package com.geekbrains.clientchat.controllers;
 
 import com.geekbrains.clientchat.ClientChat;
 import com.geekbrains.clientchat.Network;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class AuthController {
 
     public static final String AUTH_COMMAND = "/auth";
+    public static final String AUTH_OK_COMMAND = "/authOk";
 
     @FXML
     public TextField loginField;
@@ -21,7 +24,6 @@ public class AuthController {
     public Button authButton;
 
     private ClientChat clientChat;
-    private Network network;
 
     @FXML
     public void executeAuth() {
@@ -36,7 +38,7 @@ public class AuthController {
         String authCommandMessage = String.format("%s %s %s", AUTH_COMMAND, login, password);
 
         try {
-            network.sendMessage(authCommandMessage);
+            Network.getInstance().sendMessage(authCommandMessage);
         } catch (IOException e) {
             clientChat.showErrorDialog("Ошибка передачи данных по сети");
             e.printStackTrace();
@@ -48,7 +50,27 @@ public class AuthController {
         this.clientChat = clientChat;
     }
 
-    public void setNetwork(Network network) {
-        this.network = network;
+    public void initializeMessageHandler() {
+        Network.getInstance().waitMessages(new Consumer<String>() {
+            @Override
+            public void accept(String message) {
+                if (message.startsWith(AUTH_OK_COMMAND)) {
+                    Thread.currentThread().interrupt();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            clientChat.getAuthStage().close();
+                        }
+                    });
+                }else {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            clientChat.showErrorDialog("Пользователя с таким логином и паролем не существует");
+                        }
+                    });
+                }
+            }
+        });
     }
 }
