@@ -32,29 +32,47 @@ public class ClientController {
 
     public void sendMessage(){
         String message = messageTextArea.getText();
-        chatTextArea.appendText(DateFormat.getTimeInstance().format(new Date()) + " ");
-        requestFocus();
-        appendMessageToChat(message);
+
+        if (message.isEmpty()) {
+            messageTextArea.clear();
+            return;
+        }
+
+        String sender = null;
+        if (!userList.getSelectionModel().isEmpty()) {
+            sender = userList.getSelectionModel().getSelectedItem().toString();
+        }
+
         try {
+            message = sender != null ? String.format(": ", sender, message) : message;
             Network.getInstance().sendMessage(message);
         } catch (IOException e) {
             application.showErrorDialog("Ошибка передачи данных по сети");
         }
+        requestFocus(); // так надо
+        appendMessageToChat("Я", message);
     }
 
-    public void appendMessageToChat(String message) {
-        if (!message.isEmpty()) {
-            chatTextArea.appendText(message);
+    public void appendMessageToChat(String sender, String message) {
+        chatTextArea.appendText(DateFormat.getTimeInstance().format(new Date()));
+        chatTextArea.appendText(System.lineSeparator());
+
+        if (sender != null) {
+            chatTextArea.appendText(sender + ":");
             chatTextArea.appendText(System.lineSeparator());
-            messageTextArea.clear();
         }
+        chatTextArea.appendText(message);
+        chatTextArea.appendText(System.lineSeparator());
+        chatTextArea.appendText(System.lineSeparator());
+        messageTextArea.requestFocus();
+        messageTextArea.clear();
     }
 
     public void initializeMessageHandler() {
         Network.getInstance().waitMessages(new Consumer<String>() {
             @Override
             public void accept(String message) {
-                appendMessageToChat(message);
+                appendMessageToChat("Server", message);
             }
         });
     }
