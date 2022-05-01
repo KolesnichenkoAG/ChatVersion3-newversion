@@ -8,6 +8,7 @@ import java.util.List;
 
 public class MyServer {
 
+    
     private final List<ClientHandler> clients = new ArrayList<>();
 
     public void start(int port) {
