@@ -2,6 +2,7 @@ package com.geekbrains.clientchat;
 
 import com.geekbrains.clientchat.controllers.AuthController;
 import com.geekbrains.clientchat.controllers.ClientController;
+import com.geekbrains.clientchat.model.Network;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;

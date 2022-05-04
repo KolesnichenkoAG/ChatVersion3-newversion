@@ -1,4 +1,4 @@
-package com.geekbrains.clientchat;
+package com.geekbrains.clientchat.model;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

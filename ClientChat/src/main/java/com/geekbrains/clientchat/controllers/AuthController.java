@@ -1,7 +1,7 @@
 package com.geekbrains.clientchat.controllers;
 
 import com.geekbrains.clientchat.ClientChat;
-import com.geekbrains.clientchat.Network;
+import com.geekbrains.clientchat.model.Network;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
