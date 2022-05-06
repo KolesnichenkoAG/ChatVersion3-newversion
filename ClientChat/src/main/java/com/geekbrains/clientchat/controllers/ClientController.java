@@ -2,6 +2,7 @@ package com.geekbrains.clientchat.controllers;
 
 import com.geekbrains.clientchat.ClientChat;
 import com.geekbrains.clientchat.model.Network;
+import com.geekbrains.clientchat.model.ReadMessageListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,9 +13,14 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.function.Consumer;
+import java.util.List;
 
 public class ClientController {
+
+    private static final List<String> USERS_TEST_DATA = List.of(
+            "username1",
+            "username2",
+            "username3");
 
     @FXML
     public TextField messageTextArea;
@@ -29,6 +35,11 @@ public class ClientController {
     public ListView userList;
 
     private ClientChat application;
+
+    @FXML
+    public void initialize() {
+        
+    }
 
     public void sendMessage(){
         String message = messageTextArea.getText();
@@ -69,9 +80,9 @@ public class ClientController {
     }
 
     public void initializeMessageHandler() {
-        Network.getInstance().waitMessages(new Consumer<String>() {
+        Network.getInstance().addReadMessageListener(new ReadMessageListener() {
             @Override
-            public void accept(String message) {
+            public void processReceivedMessage(String message) {
                 appendMessageToChat("Server", message);
             }
         });

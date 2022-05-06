@@ -18,54 +18,47 @@ import java.io.IOException;
 
 public class ClientChat extends Application {
 
+    private static ClientChat INSTANCE;
+
     private Stage chatStage;
     private Stage authStage;
+
+    private FXMLLoader chatWindowLoader;
+    private FXMLLoader authLoader;
+
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         this.chatStage = primaryStage;
 
-        ClientController controller = createChatDialog(primaryStage);
-        connectToServer(controller);
-        createAuthDialog(primaryStage);
-
-        controller.initializeMessageHandler();
+        initViews();
+        getChatStage().show();
+        getAuthStage().show();
+        getAuthController().initializeMessageHandler();
     }
 
-    private void createAuthDialog(Stage primaryStage) throws IOException {
-        FXMLLoader authLoader = new FXMLLoader();
+    private void initViews() throws IOException {
+        initChatWindow();
+        initAuthDialog();
+    }
+
+    private void initChatWindow() throws IOException {
+        chatWindowLoader = new FXMLLoader();
+        chatWindowLoader.setLocation(ClientChat.class.getResource("hello-view.fxml"));
+
+        Parent root = chatWindowLoader.load();
+        chatStage.setScene(new Scene(root));
+    }
+
+    private void initAuthDialog() throws IOException {
+        authLoader = new FXMLLoader();
         authLoader.setLocation(ClientChat.class.getResource("authDialog.fxml"));
         AnchorPane authDialogPanel = authLoader.load();
 
         authStage = new Stage();
-        authStage.initOwner(primaryStage);
+        authStage.initOwner(chatStage);
         authStage.initModality(Modality.WINDOW_MODAL);
-
         authStage.setScene(new Scene(authDialogPanel));
-
-        AuthController authController = authLoader.getController();
-        authController.setClientChat(this);
-        authController.initializeMessageHandler();
-
-        authStage.showAndWait();
-    }
-
-    private ClientController createChatDialog(Stage primaryStage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(ClientChat.class.getResource("hello-view.fxml"));
-
-        Parent root = fxmlLoader.load();
-
-        Scene scene = new Scene(root);
-        this.chatStage.setTitle("Java FX Application");
-        this.chatStage.setScene(scene);
-
-        ClientController controller = fxmlLoader.getController();
-        controller.userList.getItems().addAll("user1", "user2");
-
-        primaryStage.show();
-
-        return controller;
     }
 
     private void connectToServer(ClientController clientController) {
@@ -86,12 +79,23 @@ public class ClientChat extends Application {
             }
         });
     }
+    public void switchToMainChatWindow(String userName) {
+        getChatStage().setTitle(userName);
+        getAuthController().close();
+        getAuthStage().close();
+        getChatController().initializeMessageHandler();
+    }
 
     public void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Ошибка");
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @Override
+    public void init() throws Exception {
+        INSTANCE = this;
     }
 
     public static void main(String[] args) {
@@ -104,6 +108,18 @@ public class ClientChat extends Application {
 
     public Stage getChatStage() {
         return chatStage;
+    }
+
+    public ClientController getChatController() {
+        return chatWindowLoader.getController();
+    }
+
+    public AuthController getAuthController() {
+        return authLoader.getController();
+    }
+
+    public static ClientChat getInstance() {
+        return INSTANCE;
     }
 
 }
