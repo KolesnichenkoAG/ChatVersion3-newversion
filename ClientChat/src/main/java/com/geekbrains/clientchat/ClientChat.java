@@ -61,24 +61,6 @@ public class ClientChat extends Application {
         authStage.setScene(new Scene(authDialogPanel));
     }
 
-    private void connectToServer(ClientController clientController) {
-        boolean resultConnectedToServer = Network.getInstance().connect();
-        if (!resultConnectedToServer) {
-            String errorMessage = "Невозможно установить сетевое соединение";
-            System.err.println(errorMessage);
-            showErrorDialog(errorMessage);
-        }
-
-
-        clientController.setApplication(this);
-
-        chatStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent windowEvent) {
-                Network.getInstance().close();
-            }
-        });
-    }
     public void switchToMainChatWindow(String userName) {
         getChatStage().setTitle(userName);
         getAuthController().close();

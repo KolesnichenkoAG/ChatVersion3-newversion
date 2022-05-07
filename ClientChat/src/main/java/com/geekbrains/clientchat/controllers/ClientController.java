@@ -4,6 +4,7 @@ import com.geekbrains.clientchat.ClientChat;
 import com.geekbrains.clientchat.model.Network;
 import com.geekbrains.clientchat.model.ReadMessageListener;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -38,7 +39,7 @@ public class ClientController {
 
     @FXML
     public void initialize() {
-        
+        userList.setItems(FXCollections.observableList(USERS_TEST_DATA));
     }
 
     public void sendMessage(){
