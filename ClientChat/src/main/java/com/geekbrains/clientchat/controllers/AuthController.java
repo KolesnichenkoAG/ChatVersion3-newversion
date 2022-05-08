@@ -4,6 +4,9 @@ import com.geekbrains.clientchat.ClientChat;
 import com.geekbrains.clientchat.dialogs.Dialogs;
 import com.geekbrains.clientchat.model.Network;
 import com.geekbrains.clientchat.model.ReadMessageListener;
+import com.geekbrains.command.Command;
+import com.geekbrains.command.CommandType;
+import com.geekbrains.command.commands.AuthOkCommandData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,9 +17,6 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 public class AuthController {
-
-    public static final String AUTH_COMMAND = "/auth";
-    public static final String AUTH_OK_COMMAND = "/authOk";
 
     @FXML
     public TextField loginField;
@@ -41,36 +41,27 @@ public class AuthController {
         Dialogs.NetworkError.SERVER_CONNECT.show();
         }
 
-        String authCommandMessage = String.format("%s %s %s", AUTH_COMMAND, login, password);
-
         try {
-            Network.getInstance().sendMessage(authCommandMessage);
+            Network.getInstance().sendAuthMessage(login, password);
         } catch (IOException e) {
             Dialogs.NetworkError.SEND_MESSAGE.show();
             e.printStackTrace();
         }
-
     }
 
     public void initializeMessageHandler() {
        readMessageListener = getNetwork().addReadMessageListener(new ReadMessageListener() {
             @Override
-            public void processReceivedMessage(String message) {
-                if (message.startsWith(AUTH_OK_COMMAND)) {
-                    String[] parts = message.split(" ");
-                    String userName = parts[1];
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                           ClientChat.getInstance().switchToMainChatWindow(userName);
-                        }
+            public void processReceivedCommand(Command command) {
+                if (command.getType() == CommandType.AUTH_OK) {
+                    AuthOkCommandData data = (AuthOkCommandData) command.getData();
+                    String userName = data.getUserName();
+                    Platform.runLater(() -> {
+                        ClientChat.getInstance().switchToMainChatWindow(userName);
                     });
                 }else {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            Dialogs.AuthError.INVALID_CREDENTIALS.show();
-                        }
+                    Platform.runLater(() -> {
+                       Dialogs.AuthError.INVALID_CREDENTIALS.show();
                     });
                 }
             }

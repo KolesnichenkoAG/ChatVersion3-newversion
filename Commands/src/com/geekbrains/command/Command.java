@@ -50,4 +50,12 @@ public class Command implements Serializable {
         command.data = new ClientMessageCommandData(sender, message);
         return command;
     }
+
+    public Object getData() {
+        return data;
+    }
+
+    public CommandType getType() {
+        return type;
+    }
 }

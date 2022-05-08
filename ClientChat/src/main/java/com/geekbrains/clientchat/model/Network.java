@@ -1,12 +1,11 @@
 package com.geekbrains.clientchat.model;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.geekbrains.command.Command;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 
 public class Network {
 
@@ -20,8 +19,8 @@ public class Network {
     private String host;
 
     private Socket socket;
-    private DataInputStream socketInput;
-    private DataOutputStream socketOutput;
+    private ObjectInputStream socketInput;
+    private ObjectOutputStream socketOutput;
     private Thread readMessageProcess;
     private boolean connected;
 
@@ -45,8 +44,8 @@ public class Network {
     public boolean connect() {
         try {
             socket = new Socket(host, port);
-            socketInput = new DataInputStream(socket.getInputStream()); // чтение
-            socketOutput = new DataOutputStream(socket.getOutputStream()); // запись
+            socketOutput = new ObjectOutputStream(socket.getOutputStream()); // запись
+            socketInput = new ObjectInputStream(socket.getInputStream()); // чтение
             readMessageProcess = startReadMessageProcess();
             connected = true;
             return true;
@@ -56,14 +55,30 @@ public class Network {
         }
     }
 
-    public void sendMessage(String message) throws IOException {
+    public void sendPrivateMessage(String receiver, String message) throws IOException {
+        sendCommand(Command.privateMessageCommand(receiver, message));
+    }
+
+    public void sendCommand(Command command) throws IOException {
         try {
-            socketOutput.writeUTF(message);
+            socketOutput.writeObject(command);
         } catch (IOException e) {
             System.err.println("Не удалось отправить сообщение на сервер");
             e.printStackTrace();
             throw e;
         }
+    }
+
+    private Command readCommand() {
+        
+    }
+
+    public void sendMessage(String message) throws IOException {
+        sendCommand(Command.publicMessageCommand(message));
+    }
+
+    public void sendAuthMessage(String login, String password) throws IOException {
+        sendCommand(Command.authCommand(login, password));
     }
 
     public Thread startReadMessageProcess() {
@@ -75,10 +90,10 @@ public class Network {
                         if (Thread.currentThread().isInterrupted()) {
                             return;
                         }
-                        String message = socketInput.readUTF();
+
 
                         for (ReadMessageListener listener : listeners) {
-                            listener.processReceivedMessage(message);
+                            listener.processReceivedCommand(command);
                         }
 
                     } catch (IOException e) {

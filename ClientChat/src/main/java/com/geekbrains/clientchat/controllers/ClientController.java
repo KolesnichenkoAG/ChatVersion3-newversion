@@ -56,8 +56,12 @@ public class ClientController {
         }
 
         try {
-            message = sender != null ? String.format(": ", sender, message) : message;
-            Network.getInstance().sendMessage(message);
+            if (sender != null) {
+                Network.getInstance().sendPrivateMessage(sender, message);
+            } else {
+                Network.getInstance().sendMessage(message);
+            }
+
         } catch (IOException e) {
             application.showErrorDialog("Ошибка передачи данных по сети");
         }
@@ -83,7 +87,7 @@ public class ClientController {
     public void initializeMessageHandler() {
         Network.getInstance().addReadMessageListener(new ReadMessageListener() {
             @Override
-            public void processReceivedMessage(String message) {
+            public void processReceivedCommand(String message) {
                 appendMessageToChat("Server", message);
             }
         });

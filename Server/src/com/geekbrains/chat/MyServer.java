@@ -1,6 +1,7 @@
 package com.geekbrains.chat;
 
 import com.geekbrains.chat.auth.AuthService;
+import com.geekbrains.command.Command;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -37,9 +38,27 @@ public class MyServer {
     public synchronized void broadcastMessage(String message, ClientHandler sender) throws IOException {
         for (ClientHandler client : clients) {
             if (client != sender) {
-                client.sendMessage(message);
+                client.sendCommand(Command.clientMessageCommand(sender.getUserName(), message));
             }
         }
+    }
+
+    public synchronized void sendPrivateMessage(ClientHandler sender, String recipient, String privateMessage) throws IOException {
+        for (ClientHandler client : clients) {
+            if (client != sender && client.getUserName().equals(recipient)) {
+                client.sendCommand(Command.clientMessageCommand(sender.getUserName(), privateMessage));
+            }
+        }
+    }
+
+    public synchronized boolean isUserNameBusy(String userName) {
+        for (ClientHandler client : clients) {
+            if (client.getUserName().equals(userName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public synchronized void subscribe(ClientHandler clientHandler) {

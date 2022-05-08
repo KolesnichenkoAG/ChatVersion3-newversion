@@ -1,7 +1,9 @@
 package com.geekbrains.clientchat.model;
 
+import com.geekbrains.command.Command;
+
 public interface ReadMessageListener {
 
-    void processReceivedMessage(String message);
+    void processReceivedCommand(Command command);
 
 }
