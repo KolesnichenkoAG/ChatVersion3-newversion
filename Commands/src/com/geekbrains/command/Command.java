@@ -3,6 +3,7 @@ package com.geekbrains.command;
 import com.geekbrains.command.commands.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Command implements Serializable {
 
@@ -48,6 +49,13 @@ public class Command implements Serializable {
         Command command = new Command();
         command.type = CommandType.CLIENT_MESSAGE;
         command.data = new ClientMessageCommandData(sender, message);
+        return command;
+    }
+
+    public static Command UpdateUserListCommandData(List<String> users) {
+        Command command = new Command();
+        command.type = CommandType.UPDATE_USERS_LIST;
+        command.data = new UpdateUserListCommandData(users);
         return command;
     }
 

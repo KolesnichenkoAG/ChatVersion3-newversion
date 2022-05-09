@@ -2,9 +2,7 @@ package com.geekbrains.clientchat;
 
 import com.geekbrains.clientchat.controllers.AuthController;
 import com.geekbrains.clientchat.controllers.ClientController;
-import com.geekbrains.clientchat.model.Network;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,7 +10,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -66,13 +63,6 @@ public class ClientChat extends Application {
         getAuthController().close();
         getAuthStage().close();
         getChatController().initializeMessageHandler();
-    }
-
-    public void showErrorDialog(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     @Override

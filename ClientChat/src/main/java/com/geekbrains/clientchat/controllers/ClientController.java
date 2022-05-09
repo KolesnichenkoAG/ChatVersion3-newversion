@@ -1,8 +1,12 @@
 package com.geekbrains.clientchat.controllers;
 
 import com.geekbrains.clientchat.ClientChat;
+import com.geekbrains.clientchat.dialogs.Dialogs;
 import com.geekbrains.clientchat.model.Network;
 import com.geekbrains.clientchat.model.ReadMessageListener;
+import com.geekbrains.command.Command;
+import com.geekbrains.command.CommandType;
+import com.geekbrains.command.commands.ClientMessageCommandData;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -35,14 +39,12 @@ public class ClientController {
     @FXML
     public ListView userList;
 
-    private ClientChat application;
-
     @FXML
     public void initialize() {
         userList.setItems(FXCollections.observableList(USERS_TEST_DATA));
     }
 
-    public void sendMessage(){
+    public void sendMessage() {
         String message = messageTextArea.getText();
 
         if (message.isEmpty()) {
@@ -63,9 +65,9 @@ public class ClientController {
             }
 
         } catch (IOException e) {
-            application.showErrorDialog("Ошибка передачи данных по сети");
+            Dialogs.NetworkError.SEND_MESSAGE.show();
         }
-        requestFocus(); // так надо
+
         appendMessageToChat("Я", message);
     }
 
@@ -80,31 +82,22 @@ public class ClientController {
         chatTextArea.appendText(message);
         chatTextArea.appendText(System.lineSeparator());
         chatTextArea.appendText(System.lineSeparator());
-        messageTextArea.requestFocus();
+        requestFocusForTextArea();
         messageTextArea.clear();
+    }
+
+    private void requestFocusForTextArea() {
+        Platform.runLater(() -> messageTextArea.requestFocus());
     }
 
     public void initializeMessageHandler() {
         Network.getInstance().addReadMessageListener(new ReadMessageListener() {
             @Override
-            public void processReceivedCommand(String message) {
-                appendMessageToChat("Server", message);
-            }
-        });
-    }
-
-    public ClientChat getApplication() {
-        return application;
-    }
-
-    public void setApplication(ClientChat application) {
-        this.application = application;
-    }
-    private void requestFocus (){
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                messageTextArea.requestFocus();
+            public void processReceivedCommand(Command command) {
+                if (command.getType() == CommandType.CLIENT_MESSAGE) {
+                    ClientMessageCommandData data = (ClientMessageCommandData) command.getData();
+                    appendMessageToChat(data.getSender(), data.getMessage());
+                }
             }
         });
     }

@@ -1,6 +1,8 @@
 package com.geekbrains.command.commands;
 
-public class PublicMessageCommandData {
+import java.io.Serializable;
+
+public class PublicMessageCommandData implements Serializable {
 
     private final String message;
 

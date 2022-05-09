@@ -1,6 +1,8 @@
 package com.geekbrains.command.commands;
 
-public class AuthCommandData {
+import java.io.Serializable;
+
+public class AuthCommandData implements Serializable {
 
     private final String login;
     private final String password;

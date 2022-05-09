@@ -15,12 +15,12 @@ public class Network {
     public static final String SERVER_HOST = "127.0.0.1";
     public static final int SERVER_PORT = 8189;
 
-    private int port;
     private String host;
+    private int port;
 
     private Socket socket;
-    private ObjectInputStream socketInput;
-    private ObjectOutputStream socketOutput;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
     private Thread readMessageProcess;
     private boolean connected;
 
@@ -44,8 +44,8 @@ public class Network {
     public boolean connect() {
         try {
             socket = new Socket(host, port);
-            socketOutput = new ObjectOutputStream(socket.getOutputStream()); // запись
-            socketInput = new ObjectInputStream(socket.getInputStream()); // чтение
+            outputStream = new ObjectOutputStream(socket.getOutputStream()); // запись
+            inputStream = new ObjectInputStream(socket.getInputStream()); // чтение
             readMessageProcess = startReadMessageProcess();
             connected = true;
             return true;
@@ -61,7 +61,7 @@ public class Network {
 
     public void sendCommand(Command command) throws IOException {
         try {
-            socketOutput.writeObject(command);
+            outputStream.writeObject(command);
         } catch (IOException e) {
             System.err.println("Не удалось отправить сообщение на сервер");
             e.printStackTrace();
@@ -69,8 +69,17 @@ public class Network {
         }
     }
 
-    private Command readCommand() {
-        
+    private Command readCommand() throws IOException {
+        Command command = null;
+
+        try {
+            command = (Command) inputStream.readObject();
+        } catch (ClassNotFoundException e) {
+            System.err.println("Failed to read Command class");
+            e.printStackTrace();
+        }
+
+        return command;
     }
 
     public void sendMessage(String message) throws IOException {
@@ -91,6 +100,7 @@ public class Network {
                             return;
                         }
 
+                        Command command = readCommand();
 
                         for (ReadMessageListener listener : listeners) {
                             listener.processReceivedCommand(command);

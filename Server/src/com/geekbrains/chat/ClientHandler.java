@@ -116,10 +116,6 @@ public class ClientHandler {
         outputStream.writeObject(command);
     }
 
-    public void sendMessage(String message) throws IOException {
-        this.outputStream.writeUTF(message);
-    }
-
     private void closeConnection() throws IOException {
         outputStream.close();
         inputStream.close();

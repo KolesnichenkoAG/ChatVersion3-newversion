@@ -1,6 +1,8 @@
 package com.geekbrains.command.commands;
 
-public class ErrorCommandData {
+import java.io.Serializable;
+
+public class ErrorCommandData implements Serializable {
 
     private final String errorMessage;
 

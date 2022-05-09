@@ -1,6 +1,8 @@
 package com.geekbrains.command.commands;
 
-public class AuthOkCommandData {
+import java.io.Serializable;
+
+public class AuthOkCommandData implements Serializable {
 
     private final String userName;
 

@@ -1,11 +1,14 @@
 package com.geekbrains.command;
 
-public enum CommandType {
+import java.io.Serializable;
+
+public enum CommandType implements Serializable {
     AUTH,
     PRIVATE_MESSAGE,
     PUBLIC_MESSAGE,
     ERROR,
     CLIENT_MESSAGE,
-    AUTH_OK
+    AUTH_OK,
+    UPDATE_USERS_LIST
 
 }
