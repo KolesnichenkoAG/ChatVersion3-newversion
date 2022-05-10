@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyServer {
 
     private AuthService authService;
+    private final Map<String, ClientHandler> clientHandlerMap = new HashMap<>();
     private final List<ClientHandler> clients = new ArrayList<>();
 
     public void start(int port) {
@@ -51,6 +54,17 @@ public class MyServer {
         }
     }
 
+    private void notifyUserListUpdated() throws IOException {
+        List<String> users = new ArrayList<>();
+        for (ClientHandler client : clients) {
+            users.add(client.getUserName());
+        }
+
+        for (ClientHandler client : clients) {
+            client.sendCommand(Command.updateUserListCommand(users));
+        }
+    }
+
     public synchronized boolean isUserNameBusy(String userName) {
         for (ClientHandler client : clients) {
             if (client.getUserName().equals(userName)) {
@@ -61,12 +75,14 @@ public class MyServer {
         return false;
     }
 
-    public synchronized void subscribe(ClientHandler clientHandler) {
+    public synchronized void subscribe(ClientHandler clientHandler) throws IOException {
         clients.add(clientHandler);
+        notifyUserListUpdated();
     }
 
-    public synchronized void unsubscribe(ClientHandler clientHandler) {
+    public synchronized void unsubscribe(ClientHandler clientHandler) throws IOException {
         clients.remove(clientHandler);
+        notifyUserListUpdated();
     }
 
     public AuthService getAuthService() {

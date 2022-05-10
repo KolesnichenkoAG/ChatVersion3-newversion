@@ -11,9 +11,6 @@ import java.net.Socket;
 
 public class ClientHandler {
 
-    public static final String AUTH_COMMAND = "/auth";
-    public static final String AUTH_OK_COMMAND = "/authOk";
-
     private MyServer server;
     private final Socket clientSocket;
     private ObjectInputStream inputStream;
@@ -49,6 +46,8 @@ public class ClientHandler {
     private void authenticate() throws IOException {
         while (true) {
             Command command = readCommand();
+
+            // здесь надо добавить таймер на отключение
 
             if (command == null) {
                 continue;
