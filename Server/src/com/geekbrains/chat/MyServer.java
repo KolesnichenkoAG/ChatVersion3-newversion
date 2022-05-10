@@ -7,14 +7,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MyServer {
 
     private AuthService authService;
-    private final Map<String, ClientHandler> clientHandlerMap = new HashMap<>();
     private final List<ClientHandler> clients = new ArrayList<>();
 
     public void start(int port) {
@@ -55,7 +53,7 @@ public class MyServer {
     }
 
     private void notifyUserListUpdated() throws IOException {
-        List<String> users = new ArrayList<>();
+        List<String> users = new CopyOnWriteArrayList<>();
         for (ClientHandler client : clients) {
             users.add(client.getUserName());
         }

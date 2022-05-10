@@ -14,7 +14,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 public class AuthController {
 
@@ -38,7 +37,7 @@ public class AuthController {
         }
 
         if (!isConnectedToServer()) {
-        Dialogs.NetworkError.SERVER_CONNECT.show();
+            Dialogs.NetworkError.SERVER_CONNECT.show();
         }
 
         try {
@@ -50,7 +49,7 @@ public class AuthController {
     }
 
     public void initializeMessageHandler() {
-       readMessageListener = getNetwork().addReadMessageListener(new ReadMessageListener() {
+        readMessageListener = getNetwork().addReadMessageListener(new ReadMessageListener() {
             @Override
             public void processReceivedCommand(Command command) {
                 if (command.getType() == CommandType.AUTH_OK) {
@@ -59,16 +58,16 @@ public class AuthController {
                     Platform.runLater(() -> {
                         ClientChat.getInstance().switchToMainChatWindow(userName);
                     });
-                }else {
+                } else {
                     Platform.runLater(() -> {
-                       Dialogs.AuthError.INVALID_CREDENTIALS.show();
+                        Dialogs.AuthError.INVALID_CREDENTIALS.show();
                     });
                 }
             }
         });
     }
 
-    public boolean isConnectedToServer () {
+    public boolean isConnectedToServer() {
         Network network = getNetwork();
         return network.isConnected() || network.connect();
     }
