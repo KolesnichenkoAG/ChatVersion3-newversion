@@ -6,8 +6,11 @@ import com.geekbrains.command.commands.AuthCommandData;
 import com.geekbrains.command.commands.PrivateMessageCommandData;
 import com.geekbrains.command.commands.PublicMessageCommandData;
 
+
 import java.io.*;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientHandler {
 
@@ -28,6 +31,7 @@ public class ClientHandler {
         new Thread(() -> {
             try {
                 authenticate();
+                //timerAuthenticate();
                 readMessages();
             } catch (IOException e) {
                 System.err.println("Failed to process message from client");
@@ -43,10 +47,20 @@ public class ClientHandler {
     }
 
     private void authenticate() throws IOException {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    closeConnection();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        },1*120*1000);
+
         while (true) {
             Command command = readCommand();
-
-            // здесь надо добавить таймер на отключение
 
             if (command == null) {
                 continue;
@@ -62,6 +76,7 @@ public class ClientHandler {
                 } else if (server.isUserNameBusy(userName)) {
                     sendCommand(Command.errorCommand("Такой пользователь уже существует"));
                 } else {
+                    timer.cancel();
                     this.userName = userName;
                     sendCommand(Command.authOkCommand(userName));
                     server.subscribe(this);
@@ -85,8 +100,10 @@ public class ClientHandler {
     }
 
     private void readMessages() throws IOException {
+
         while (true) {
             Command command = readCommand();
+
             if (command == null) {
                 continue;
             }
@@ -114,7 +131,7 @@ public class ClientHandler {
         outputStream.writeObject(command);
     }
 
-    private void closeConnection() throws IOException {
+    public void closeConnection() throws IOException {
         outputStream.close();
         inputStream.close();
         server.unsubscribe(this);
@@ -124,4 +141,18 @@ public class ClientHandler {
     public String getUserName() {
         return userName;
     }
+
+    /*public void timerAuthenticate () throws IOException {
+         Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    closeConnection();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        },1*5*1000);
+    }*/
 }

@@ -47,7 +47,7 @@ public class ClientChat extends Application {
         getChatController().initializeMessageHandler();
     }
 
-    private void initAuthDialog() throws IOException {
+    public void initAuthDialog() throws IOException {
         authLoader = new FXMLLoader();
         authLoader.setLocation(ClientChat.class.getResource("authDialog.fxml"));
         AnchorPane authDialogPanel = authLoader.load();
