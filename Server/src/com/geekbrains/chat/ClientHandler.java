@@ -20,6 +20,7 @@ public class ClientHandler {
     private ObjectOutputStream outputStream;
     private String userName;
 
+
     public ClientHandler(MyServer server, Socket clientSocket) {
         this.server = server;
         this.clientSocket = clientSocket;
@@ -52,12 +53,13 @@ public class ClientHandler {
             @Override
             public void run() {
                 try {
+
                     closeConnection();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        },1*120*1000);
+        },1*5*1000);
 
         while (true) {
             Command command = readCommand();

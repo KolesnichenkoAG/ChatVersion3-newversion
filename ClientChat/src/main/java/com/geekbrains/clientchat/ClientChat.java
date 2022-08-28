@@ -17,7 +17,7 @@ public class ClientChat extends Application {
     private static ClientChat INSTANCE;
 
     private Stage chatStage;
-    private Stage authStage;
+    public Stage authStage;
 
     private FXMLLoader chatWindowLoader;
     private FXMLLoader authLoader;
@@ -74,6 +74,9 @@ public class ClientChat extends Application {
     }
 
     public Stage getAuthStage() {
+        return authStage;
+    }
+    public Stage setAuthStage() {
         return authStage;
     }
 
