@@ -17,6 +17,7 @@ public class MyServer {
 
     public void start(int port) {
         try(ServerSocket serverSocket = new ServerSocket(port)) {
+            AuthService.connect();
             System.out.println("Server has been started");
             authService = new AuthService();
             while (true) {
@@ -26,6 +27,8 @@ public class MyServer {
         } catch (IOException e) {
             System.err.println("Failed to bind port " + port);
         }
+        AuthService.disconnect();
+
     }
 
     private void waitAndProcessClientConnection(ServerSocket serverSocket) throws IOException {
