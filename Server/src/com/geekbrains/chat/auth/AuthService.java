@@ -6,16 +6,16 @@ import java.util.Set;
 
 public class AuthService {
 
-    private static Connection connection;
-    private static Statement statement;
+   /* private static Connection connection;
+    private static Statement statement;*/
 
-   /* private static Set<User> USER = Set.of(
+    private static Set<User> USER = Set.of(
             new User("login1", "pass1", "username1"),
             new User("login2", "pass2", "username2"),
             new User("login3", "pass3", "username3")
-    );*/
+    );
 
-    /*public String getUsernameByLoginAndPassword(String login, String password) {
+    public String getUsernameByLoginAndPassword(String login, String password) {
         User requiredUser = new User(login, password);
         for (User user : USER) {
             if (requiredUser.equals(user)) {
@@ -24,9 +24,9 @@ public class AuthService {
         }
 
         return null;
-    }*/
+    }
 
-    public String getUsernameByLoginAndPassword(String login, String password) {
+   /* public String getUsernameByLoginAndPassword(String login, String password) {
         String sql = String.format("SELECT username FROM user1 WHERE login='%s' and password='%s'", login, password);
         try {
             ResultSet resultSet = statement.executeQuery(sql);
@@ -74,5 +74,5 @@ public class AuthService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 }

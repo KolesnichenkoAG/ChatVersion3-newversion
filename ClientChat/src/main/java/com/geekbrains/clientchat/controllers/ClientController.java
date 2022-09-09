@@ -7,6 +7,7 @@ import com.geekbrains.command.Command;
 import com.geekbrains.command.CommandType;
 import com.geekbrains.command.commands.ClientMessageCommandData;
 import com.geekbrains.command.commands.UpdateUserListCommandData;
+import history.HistoryService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -66,6 +67,8 @@ public class ClientController {
 
         if (sender != null) {
             chatTextArea.appendText(sender + ":");
+
+            //HistoryService.saveHistory(userName, "");
             chatTextArea.appendText(System.lineSeparator());
         }
         chatTextArea.appendText(message);
