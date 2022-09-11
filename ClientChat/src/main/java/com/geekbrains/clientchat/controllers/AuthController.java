@@ -7,6 +7,7 @@ import com.geekbrains.clientchat.model.ReadMessageListener;
 import com.geekbrains.command.Command;
 import com.geekbrains.command.CommandType;
 import com.geekbrains.command.commands.AuthOkCommandData;
+import history.HistoryService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -57,6 +58,7 @@ public class AuthController {
                     String userName = data.getUserName();
                     Platform.runLater(() -> {
                         ClientChat.getInstance().switchToMainChatWindow(userName);
+
                     });
                 } else {
                     Platform.runLater(() -> {

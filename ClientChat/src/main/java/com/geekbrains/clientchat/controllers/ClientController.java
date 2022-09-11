@@ -50,6 +50,7 @@ public class ClientController {
         try {
             if (sender != null) {
                 Network.getInstance().sendPrivateMessage(sender, message);
+
             } else {
                 Network.getInstance().sendMessage(message);
             }
@@ -66,10 +67,13 @@ public class ClientController {
         chatTextArea.appendText(System.lineSeparator());
 
         if (sender != null) {
+            chatTextArea.appendText(HistoryService.loadHistory(sender));
             chatTextArea.appendText(sender + ":");
 
-            //HistoryService.saveHistory(userName, "");
+            HistoryService.saveHistory(sender, message);
             chatTextArea.appendText(System.lineSeparator());
+
+
         }
         chatTextArea.appendText(message);
         chatTextArea.appendText(System.lineSeparator());
@@ -89,6 +93,7 @@ public class ClientController {
                 if (command.getType() == CommandType.CLIENT_MESSAGE) {
                     ClientMessageCommandData data = (ClientMessageCommandData) command.getData();
                     appendMessageToChat(data.getSender(), data.getMessage());
+
                 } else if (command.getType() == CommandType.UPDATE_USERS_LIST) {
                     UpdateUserListCommandData data = (UpdateUserListCommandData) command.getData();
                     Platform.runLater(() -> {

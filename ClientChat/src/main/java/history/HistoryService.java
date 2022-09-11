@@ -9,14 +9,14 @@ import java.util.List;
 
 public class HistoryService {
 
-    public static String loadHistory(String userName) {
+    public static String loadHistory(String username) {
 
         StringBuilder sb = new StringBuilder();
         int maxLines = 100;
 
         List<String> result = new ArrayList<>();
 
-        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File("history_" + userName + ".txt"), StandardCharsets.UTF_8)) {
+        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File("history_" + username + ".txt"), StandardCharsets.UTF_8)) {
 
             String line;
             while ((line = reader.readLine()) != null && result.size() < maxLines) {
@@ -32,8 +32,8 @@ public class HistoryService {
         return sb.toString();
     }
 
-    public static boolean saveHistory(String userName, String text) {
-        File history = new File("history_" + userName + ".txt");
+    public static boolean saveHistory(String username, String text) {
+        File history = new File("history_" + username + ".txt");
 
         if (!history.exists()) {
             try {
@@ -44,7 +44,7 @@ public class HistoryService {
         }
 
         try {
-            String fileName = "history_" + userName + ".txt";
+            String fileName = "history_" + username + ".txt";
             File userHistory = new File(fileName);
 
             PrintWriter fileWriter1 = new PrintWriter(new FileWriter(userHistory, true));

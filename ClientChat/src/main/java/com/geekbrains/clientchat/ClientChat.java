@@ -2,6 +2,7 @@ package com.geekbrains.clientchat;
 
 import com.geekbrains.clientchat.controllers.AuthController;
 import com.geekbrains.clientchat.controllers.ClientController;
+import history.HistoryService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -45,6 +46,8 @@ public class ClientChat extends Application {
         Parent root = chatWindowLoader.load();
         chatStage.setScene(new Scene(root));
         getChatController().initializeMessageHandler();
+
+
     }
 
     public void initAuthDialog() throws IOException {
