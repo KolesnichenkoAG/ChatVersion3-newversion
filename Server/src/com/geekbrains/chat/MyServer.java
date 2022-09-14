@@ -9,9 +9,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class MyServer {
 
+    private static final Logger logger = Logger.getLogger("");
     private AuthService authService;
     private final List<ClientHandler> clients = new ArrayList<>();
 
