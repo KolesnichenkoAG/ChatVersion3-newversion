@@ -15,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -22,6 +24,7 @@ import java.util.Date;
 
 public class ClientController {
 
+    private static final Logger logger = LogManager.getLogger(ClientController.class);
     @FXML
     public TextField messageTextArea;
 
@@ -60,10 +63,12 @@ public class ClientController {
         }
 
         appendMessageToChat("Я", message);
+        logger.info("пользователь отправил сообщение");
     }
 
     public void appendMessageToChat(String sender, String message) {
         chatTextArea.appendText(DateFormat.getTimeInstance().format(new Date()));
+        logger.info("И что же сейчас происходит ?");
         chatTextArea.appendText(System.lineSeparator());
 
         if (sender != null) {

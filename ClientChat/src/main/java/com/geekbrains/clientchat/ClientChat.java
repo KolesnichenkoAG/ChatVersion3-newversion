@@ -10,11 +10,14 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
 public class ClientChat extends Application {
 
+    private static final Logger logger = LogManager.getLogger(ClientChat.class);
     private static ClientChat INSTANCE;
 
     private Stage chatStage;
@@ -36,6 +39,7 @@ public class ClientChat extends Application {
 
     private void initViews() throws IOException {
         initChatWindow();
+        logger.info("Окно создалось");
         initAuthDialog();
     }
 
@@ -65,6 +69,7 @@ public class ClientChat extends Application {
         getChatStage().setTitle(userName);
         getAuthController().close();
         getAuthStage().close();
+        logger.info("пользователь защел в чат");
     }
 
     @Override
